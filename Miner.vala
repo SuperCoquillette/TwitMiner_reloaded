@@ -99,7 +99,11 @@ class CSV_to_Transaction {
     TreeMap<string, int> c = new TreeMap<string, int>();
 
     if(outfile.query_exists()){
-      outfile.delete();
+      try{
+        outfile.delete();
+      }catch(Error e){
+        stderr.printf("%s\n", e.message);
+      }
     }
 
     try {
@@ -140,7 +144,11 @@ class CSV_to_Transaction {
     Generator g = new Generator();
     g.set_root(jsonBuilder.get_root());
     g.pretty = true;
-    g.to_file(dico);
+    try{
+      g.to_file(dico);
+    }catch(Error e){
+      stderr.printf("%s\n", e.message);
+    }
     /* -- */
 
     try {
@@ -167,8 +175,12 @@ class Transaction_to_CSV {
                                string output = "test.out.csv",
                                string dico   = "test.dico"){
     Parser p = new Parser();
-    if(!p.load_from_file(dico)){
-      stderr.printf("Cannot open dico\n");
+    try{
+      if(!p.load_from_file(dico)){
+        stderr.printf("Cannot open dico\n");
+      }
+    }catch(Error e){
+      stderr.printf("%s\n", e.message);
     }
 
     Json.Node n = p.get_root();
