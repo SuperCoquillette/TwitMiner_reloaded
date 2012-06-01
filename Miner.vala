@@ -6,7 +6,8 @@ class Downloader {
   private TreeMap<string, string> _woeid;
   private string                  _filename;
   private File                    _file;
-  private static string           TWITTER_REQUEST = "https://api.twitter.com/1/trends/%s.json";
+  private static string           TWITTER_REQUEST =
+    "https://api.twitter.com/1/trends/%s.json";
   private bool                    _running = true;
 
   public Downloader(string filename = "test.csv"){
@@ -42,7 +43,9 @@ class Downloader {
     Message      message = null;
 
     try{
-      DataOutputStream os = new DataOutputStream(_file.query_exists() ? _file.append_to(FileCreateFlags.NONE) : _file.create(FileCreateFlags.REPLACE_DESTINATION));
+      DataOutputStream os = new DataOutputStream(_file.query_exists() ?
+          _file.append_to(FileCreateFlags.NONE) :
+          _file.create(FileCreateFlags.REPLACE_DESTINATION));
       foreach(string key in _woeid.keys){
         if(!_running) break;
         stdout.printf("\r%-20s", key);
@@ -54,12 +57,18 @@ class Downloader {
         string response = (string)message.response_body.data;
         parser.load_from_data(response, response.length);
 
-        if(parser.get_root().get_array().get_object_element(0).has_member("error")){
+        if(parser.get_root().get_array().get_object_element(0)
+          .has_member("error")){
+
           stderr.printf("Limit reached\n");
         }else{
-          os.put_string("%s; %s; ".printf(new DateTime.now_local().to_string(), key));
-          foreach(var trends in parser.get_root().get_array().get_object_element(0).get_array_member("trends").get_elements()){
-            var trend = trends.get_object();
+          os.put_string("%s; %s; ".printf(
+            new DateTime.now_local().to_string(), key));
+
+          foreach(var trends in parser.get_root().get_array()
+            .get_object_element(0).get_array_member("trends").get_elements()){
+
+            Json.Object trend = trends.get_object();
             os.put_string("%s; ".printf(trend.get_string_member("name")));
           }
           os.put_string("\n");
@@ -153,7 +162,8 @@ class CSV_to_Transaction {
 
     try {
       DataInputStream  dis = new DataInputStream (infile.read ());
-      DataOutputStream os = new DataOutputStream(outfile.create(FileCreateFlags.REPLACE_DESTINATION));
+      DataOutputStream os = new DataOutputStream(
+        outfile.create(FileCreateFlags.REPLACE_DESTINATION));
       string line;
       while ((line = dis.read_line (null)) != null) {
         string [] elements = line.split(";");
